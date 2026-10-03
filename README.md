@@ -3,239 +3,269 @@
 </p>
 
 <h1 align="center">Frames</h1>
-<p align="center"><strong>Frame-based VFX + AI-gen compositor for ComfyUI.</strong></p>
+<p align="center"><strong>Frame-based VFX + AI-gen compositor.</strong></p>
 <p align="center">
-  Drag media onto a frame. Pick a template. Hit Run. The output lands back on the canvas,
-  with a faint dashed line back to the inputs that produced it.
+  Drop media on a board. Grade, key, matte and comp it in-app, generate with ComfyUI or cloud models,
+  review with your team in ShotGrid — and every output keeps a line back to what made it.
 </p>
 
 ---
 
 ## What Frames is
 
-Frames is a desktop app that wraps ComfyUI in a workflow most VFX artists already know: a board you can drop media onto, frames that hold a single shot, and templates that turn into a settings form so you never wire nodes by hand. ComfyUI runs locally or on a RunPod GPU; Frames pulls outputs back automatically and places them next to their inputs on the canvas.
+Frames is a desktop studio for VFX artists: a board you drop media onto, **frames** that hold a shot's work, and native compositing tools that run in the app — plus ComfyUI templates (local or on a RunPod GPU) and cloud generation models when you need AI.
 
-- **No node wiring.** Templates declare the inputs (prompt, first-frame, control image, mask, etc.). The form is auto-generated. The wires happen on the ComfyUI side.
-- **Frames are containers.** A Frame holds one shot's inputs (media + settings) and produces one set of outputs. Duplicate a Frame to fan out variants.
-- **Lineage by default.** Every output knows which inputs and template produced it. Right-click any output → "Open source folder" or "Restore inputs" to reuse them on a new Frame.
-- **Multi-pod aware.** Connect multiple RunPod endpoints; one is *focused* (where the next run goes), the others stay alive so their job progress keeps streaming into the Sampling dock.
+- **Native frames, no node wiring.** Merge, Color, Blur, Keyer, Despill, Transform, Retime, Regrain and Invert run in-app in float, preview live, and bake masters (ProRes / EXR / HEVC).
+- **ComfyUI templates as forms.** Templates declare their inputs; Frames builds the settings form. Drop media into slots, hit Run.
+- **Cloud generation built in.** Google Vertex (Nano Banana, Veo, Omni), FAL (Seedance, Kling, MiniMax, Wan…), Beeble, Topaz and BytePlus from one widget.
+- **Lineage by default.** Every output knows which inputs and settings produced it.
+- **Production tie-in.** Track your time, map it to ShotGrid tasks, review versions with frame annotations, and post notes to artists — without leaving the app.
 
 ---
 
 ## Install
 
-> Frames is currently in **closed beta**. Activation requires approval — see [Activate](#activate) below.
+> Frames is currently in **closed beta**. Activation requires approval — see [Activate](#activate).
 
 ### Windows
 
 Download the latest `Frames-Setup-X.Y.Z.exe` from the [Releases page](https://github.com/richservo/frames-releases/releases/latest) and run it.
 
-The installer pulls ~200 MB (CPU build) or ~2 GB (CUDA build) of PyTorch + supporting wheels during install. The progress is visible in the installer dialog — it isn't hung, it's downloading. NVIDIA GPU is auto-detected; CUDA wheels are picked when present.
+- Installs per-user under `%LOCALAPPDATA%\Programs\Frames` (folder can be changed). No admin rights needed.
+- The installer is small (~120 MB). The Python runtime that powers the local AI tools is set up on **first launch** (see below), not during install.
+- The installer is not code-signed yet — Windows SmartScreen will warn on first run. Click **More info → Run anyway**.
 
-Installs per-user under `%LOCALAPPDATA%\Programs\Frames`. No admin rights required. Everything Python lands inside the app directory — your system Python is never touched.
+### First launch: runtime setup
+
+After activation, the **Setting up Frames** screen installs the Python runtime once (several GB):
+
+1. **Location** — default `%LOCALAPPDATA%\Frames\runtime`, or pick another drive with **Change…** (handy to keep large files off C:).
+2. **Hardware** — **NVIDIA GPU (CUDA)** or **CPU only**. The detected option is marked.
+3. **Install** — progress streams live. Later app updates only download what changed.
+
+Model weights download separately the first time you use each feature. The runtime can be moved later from **Settings → Python runtime**.
 
 ### macOS
 
 Coming soon.
 
-### Auto-updates
-
-Once installed, Frames checks for updates on launch and applies them in the background. You'll get a toast when an update is ready; it installs on the next quit.
-
 ---
 
 ## Activate
 
-> _Screenshot: the activation modal on first launch._
-
-First launch shows the activation modal with two paths:
+First launch shows the activation screen.
 
 ### Request access (closed beta)
 
-1. Fill in name, email, and address.
-2. Click **Request access**.
-3. The screen flips to "Request submitted" and starts polling for approval every 5 seconds.
-4. You can close the app — the next launch resumes on the polling screen.
-5. Once approved, the screen activates automatically and the app boots.
+1. Enter your full name, email and mailing address, then **Request access**.
+2. The screen shows "Request submitted" and checks for approval every few seconds. You can close the app — the next launch picks up where it left off.
+3. Once approved, the license applies automatically and the app opens.
 
-Approval is typically within a few hours. Your information is encrypted in transit and stored only to issue and support your license.
+Your details are encrypted in transit and used only to issue and support your license.
 
 ### Already have a .rslicense file
 
-If you received a `.rslicense` file directly:
+Click **I have a .rslicense file already → Choose .rslicense file…**. It's verified and stored in your user data.
 
-1. Click **I have a .rslicense file already**.
-2. Click **Choose .rslicense file…**.
-3. Pick the file. It's verified and copied into your user data; the dialog dismisses.
-
-The machine ID at the bottom of the modal is what bound (paid) licenses match against. Copy it if support asks.
+The **Machine ID** at the bottom of the screen (with a copy button) is what support may ask for.
 
 ---
 
 ## Quick start
 
-> _Screenshot: the main window with the nav rail on the left and the Studio panel open._
+1. **Open Studio** — click **Studio** in the left nav. The canvas is the big empty space.
+2. **Drop media** — drag videos, images or image sequences from your desktop onto the canvas.
+3. **Add a frame** — press **Tab** for the widget palette, or use the Alt shortcuts (e.g. **Alt+C** Color, **Alt+K** Keyer, **Alt+F** a ComfyUI Frame around your selection).
+4. **Wire it** — drag a media card into the frame's input; tweak it live in the frame's viewer.
+5. **Run output** — bakes a master to the library (and to the board's output folder if set).
 
-1. **Add a pod** — open **Connection** in the left nav → **+ Add pod**. Paste a RunPod SSH connection line (the "Connect" tab in the pod's web UI) and give the profile a name. Connect.
-2. **Open the Studio panel** — click **Studio** in the left nav. The canvas is the big empty space.
-3. **Add a Frame** — toolbar → **Frame**. Pick a template from the dropdown in the Frame's header.
-4. **Drop media** — drag a video or image from your OS / from the Files panel / from the canvas onto an empty input slot on the Frame.
-5. **Hit Run** — the Run button is in the Frame's footer. Progress streams into the Sampling dock on the right.
-6. **Done** — the output appears on the canvas next to the Frame, with a dashed line back to its inputs.
+To run ComfyUI templates, add a connection first (see [Connection](#connection)) — local ComfyUI or a RunPod pod.
 
 ---
 
 ## Feature reference
 
-### Connection panel
+### Studio — boards and canvas
 
-> _Screenshot: Connection panel showing two saved pods, one focused and connected._
+An infinite pan/zoom board (middle-mouse / two-finger drag to pan, wheel to zoom).
 
-- **Add pod** — three flavors: existing remote pod (paste an SSH line), new remote pod (full setup wizard with bootstrap monitor), or a local ComfyUI install on your machine.
-- **Multi-pod** — connect more than one at once. The one you click becomes *focused*; everything interactive (Run, Files, embedded Comfy view, Resources monitor) targets the focused endpoint.
-- **Why others stay connected** — so live job progress for runs already in flight on those endpoints keeps streaming into the Sampling dock. Switching focus doesn't kill them.
+- **Boards and projects** — the board switcher shows a project tree (Show → Scene → …, any depth). Boards without a project are *Unfiled*. Search by name or content.
+- **Board history** — the live board plus five rolling backups, restorable (and the restore is undoable).
+- **Board Settings** — per board:
+  - **Project** placement in the tree.
+  - **Allowed credential profiles** — lock a board to a client's accounts; other profiles are hidden and refused at run time.
+  - **Output folder** — where **Run output** delivers masters (the library proxy stays in place).
+  - **Output frame rate** and **output colorspace** for rendered masters (Auto follows the source).
+  - **GCS bucket** — required for Google's Generative Media Pro models.
+  - **ShotGrid time logs** — which ShotGrid task this board's tracked time goes to.
+- **Media cards** — images, video and image sequences with trim (in/out marks), retime, resize, and audio.
+- **Lineage** — outputs keep a dashed line back to their inputs.
 
-### Studio — the canvas
+#### Native frames (run in-app, no ComfyUI needed)
 
-> _Screenshot: the Studio canvas with a Frame, two media cards, and an output placement._
+| Frame | Shortcut | What it does |
+|---|---|---|
+| **Merge** | Alt+M | Layer stack compositing (over, screen, multiply…). |
+| **Color** | Alt+C | Float grade: exposure, white balance, lift/gamma/gain wheels, contrast, ASC-CDL, saturation, curves, scopes, .cube LUTs. |
+| **Blur** | Alt+B | Gaussian, box, disc and bokeh defocus with lens presets; optional mask. |
+| **Invert** | Alt+I | Invert a clip or matte. |
+| **Transform** | Alt+T | Move / scale / rotate with a gizmo, keyframeable, optional mask. |
+| **Despill** | Alt+D | Remove green/blue spill with spill replacement and cast correction. |
+| **Keyer** | Alt+K | Chroma key with screen balance, clip black/white and built-in despill. |
+| **Regrain** | Alt+G | Re-apply the plate's grain to a comp, per-channel. |
+| **Retime** | Alt+R | Keyable speed curve; renders in-betweens with RIFE. |
+| **Frame** | Alt+F | ComfyUI template container: pick a template, fill its slots, Run. |
 
-An infinite pan/zoom board. Pan with middle mouse or trackpad two-finger drag. Zoom with the wheel. The toolbar across the top adds canvas widgets.
+Every native frame previews live and has **Run output** to bake a master (ProRes / EXR / HEVC).
 
-**Widgets you can add:**
+#### Widgets
 
 | Widget | What it does |
 |---|---|
-| **Frame** | The run container. Pick a template, drop media into role slots, Run. |
-| **Media card** | An image, a video, or an image sequence. Supports trim (in/out marks), retime, and resize. |
-| **Timeline** | Scrub through a sequence of cards as if they were a video. |
-| **SAM3 Mask** | Auto-generate masks from a text prompt or click points on an image. Runs locally on your GPU. |
-| **Gemini Inpaint** | Inpaint a region using Google's Gemini API. |
-| **Google Gen** | Generate / edit images via Google's gen-AI APIs. |
-| **Ollama Chat** | Chat with a local Ollama model. Useful for prompt brainstorming inside the canvas. |
-| **Sticky note** | Plain text annotation. |
-| **LatLong** | Equirectangular / 360 helper for spherical workflows. |
+| **Generate Media** | Cloud image/video generation. Google Vertex (Nano Banana Pro / 2, Veo 3 / 3.1, Gemini Omni, Generative Media Pro models), FAL (Seedance, Kling, MiniMax H3, Wan, GPT Image, Seedream, depth, upscale…), Beeble SwitchX, Topaz (upscale / interpolation), BytePlus Seedance. Reference bin, history rail, @mentions. |
+| **Inpaint** | Paint a mask; Nano Banana regenerates just that area as a toggleable layer. Clone stamp, video timeline, layer groups. |
+| **Local Generate Media** | Wan VACE video generation, locally or on a pod; pod models include Wan 2.2 VACE, ID-V2V, SCAIL-2 and MiniMax H3 (ref-to-video, masked, ControlNet, first/last frame). |
+| **SAM3 Mask** | Click points to mask a subject; propagates through video. Runs locally. |
+| **MatAnyone** | Mask-guided video alpha matting (feed it a SAM3 mask). |
+| **ViTMatte** | Turn a rough mask into a clean alpha edge (hair, fur, props). |
+| **Rotoscope** | Animatable bezier shapes with feather; Ctrl+drag snaps points to edges. |
+| **3D Camera** | Turn a still + depth into a mesh you can move to find a new camera angle. |
+| **Tile Outpaint** | Split a larger canvas into overlapping tiles, generate each, stitch with blending. |
+| **LoRA Trainer** | Train Wan 2.2 character / style / object LoRAs on a connected pod, with live loss and samples. |
+| **Prompt Enhancer** | Rewrite prompts with Ollama, a RunPod serverless endpoint or Claude; positive / negative outputs wire into template slots. |
+| **LatLong Rotate** | Rotate 360° equirectangular images, with exposure / HDR range. |
+| **Solid** | Solid-color image or video plate. |
+| **Note** | Sticky note. |
 
-> _Screenshot: the canvas toolbar showing the widget add menu._
+### Time
 
-### Frames + templates
+A passive time tracker: it records what you worked on each day — runs, generations, bakes, imports, edits and time active in the app, per board — with no timers to remember.
 
-> _Screenshot: a Frame with three role slots, two filled, one empty._
+- **Range** — Today by default; Yesterday, This week, Last week, This month, or any date range. Past days are rebuilt from your history, so it works retroactively.
+- **Project filter** — one project and everything nested under it, for per-client reports.
+- **Manual tasks** — Start / Stop named tasks (e.g. "R&D: depth model"), edit times afterwards, add notes.
+- **Views** — totals per board and per task, a per-day timeline, and a detailed log of every block.
+- **Export** — **PDF** report, **detailed CSV**, or a **ShotGrid CSV** (decimal hours).
+- **Push to ShotGrid** — send time logs straight to the mapped ShotGrid tasks, with a preview first. Pushing a day again updates the same time logs instead of duplicating them.
 
-A **Frame** binds a *template* to a set of *placements* (media cards on the canvas).
+### ShotGrid
 
-- The template declares which inputs it expects (e.g. "first frame", "control video", "prompt").
-- You bind a media card to a role by dragging it into the Frame's slot, or right-clicking the media card → **Use as → first frame**.
-- The Frame's settings form is auto-generated from the template's exposed fields.
-- The Run button executes when all required slots are filled.
+Appears in the nav once a ShotGrid site is added in Credentials. A badge shows tasks with unread notes.
 
-**Important:** the Frame is the *sole source of truth* for what a run sees. Removing a media card from a slot removes it from the run. No hidden state.
+- **Modes** — My tasks (all projects), Project tasks, All shots, and Playlists. Sortable columns, text search, filters for task, task status and shot status, **Hide final**, **New notes only**. Filters are remembered per project.
+- **Multi-select** — click, Ctrl+click, Shift+click.
+- **Task / shot detail** — thumbnail, description, cut range, statuses, dates, bid vs logged, notes with replies and attachments, and every version with playback.
+- **New-note alerts** — tasks with notes you haven't read are highlighted and announced, following ShotGrid's own read state.
+- **Log time / Start timer / New note** from any task.
+- **Upload from the canvas** — right-click a media card → **Upload to ShotGrid…** creates a Version on the task (review copy or master), auto-named as the next version, with your description. Progress shows in the Transfers dock.
 
-#### Template editor
+#### Playlists and review
 
-> _Screenshot: the template editor showing a workflow with three exposed fields._
+- **ShotGrid playlists** — open any project playlist; create new ones; **+ Playlist** on any version.
+- **Local playlists** — right-click shots → **Add to local playlist**. Kept in Frames; each shot plays its latest video unless you pin a version; save to ShotGrid any time.
+- **Quick playlists** — **Whole sequence** or **Prev / current / next** for any shot, in cut order, skipping omitted shots, using each shot's latest video.
+- **Review player** — plays continuously (the next clip loads ahead), thumbnail strip that follows playback, hover a tile to pick another version, × to drop a clip, **Solo** to loop one clip.
+- **Frame annotations** — pause, draw (pen with colors, arrow, circle, square, text), and post: the artist gets a ShotGrid note with the exact frames attached, numbered in ShotGrid's frame range. Annotated frames show as diamonds on the playbar; jump between them with **[** / **]**. Text annotations prefill the note.
+- **Viewer color** — exposure, gamma, contrast and saturation per clip (view only).
 
-Templates are ComfyUI workflows with their user-facing fields tagged. To author a template:
+| Review key | Action |
+|---|---|
+| Space | Play / pause |
+| ← / → (or , / .) | Step one frame |
+| J / K / L | Reverse / pause / forward (press again for 2×, 4×); hold K + J/L to step |
+| ↑ / ↓ | Previous / next clip |
+| [ / ] | Previous / next annotated frame |
+| S | Solo (loop this clip) |
+| Ctrl+Z | Undo annotation |
 
-1. Build the workflow in the embedded ComfyUI view.
-2. Open the template editor (Studio panel → top right → ⋯ menu).
-3. For each node input you want to expose, tag it with a friendly name and a role type (image, video, mask, prompt, number, etc.).
-4. Save. The template now appears in every Frame's dropdown.
+### Connection
+
+Saved endpoints, stored encrypted:
+
+- **Local ComfyUI** on this machine (install path + port).
+- **Remote** pods — paste an SSH line, or the new-pod wizard for RunPod.
+
+Several can be connected at once; the one you click is *focused* and gets Runs, Files, Resources and the ComfyUI view. Others stay connected so their in-flight runs keep streaming progress.
 
 ### Run flow
 
-> _Screenshot: a Frame mid-run with the Sampling dock streaming progress._
+- **Run** submits to the focused ComfyUI. Runs queue per endpoint, one at a time, and survive an app restart (the app rebinds to prompts still running).
+- **Sampling dock** (right rail) streams per-endpoint progress; **Completions** lists recent results — click to find them on the canvas.
 
-- **Run button** — submits the prompt to ComfyUI. The label tracks the run-queue state (Queued, Running, Idle).
-- **Queue** — runs are FIFO per endpoint, one in flight at a time. Subsequent Runs queue locally and submit when the prior finishes.
-- **Persistent** — queued + in-flight runs survive app reload. Boot recapture rebinds to the still-running prompt on the pod and resumes progress streaming.
-- **Output placement** — when a run completes, its output is auto-placed on the canvas next to its Frame. A faint dashed line marks the input-to-output lineage.
-- **Sampling dock** (right rail) — per-endpoint streaming progress: step count, ETA, current sampler / KSampler progress bars from ComfyUI's WebSocket.
-- **Completions dock** — last N completed runs, click any row to reveal its output on the canvas.
+### Other panels
 
-### Embedded ComfyUI
+- **Status** — live status and a full health check (pull server, SSH, tunnel, file round-trip).
+- **Actions** — free memory, restart the local Python worker, kill / interrupt ComfyUI, start / stop Ollama.
+- **ComfyUI** — the focused endpoint's ComfyUI, embedded, for authoring templates.
+- **Files** — browse the focused endpoint, bookmarks, drag files onto the canvas.
+- **Logs** — live log tail.
+- **Resources** — GPU / VRAM / CPU / RAM / disks, history charts and processes.
+- **Terminal** — a shell on the focused endpoint.
+- **Storage** — reclaim disk space: automatic cleanup of rebuildable files, a review list with a 7-day trash, and model sizes.
 
-> _Screenshot: the ComfyUI panel with a workflow loaded in the embedded view._
+### Credentials
 
-The **ComfyUI** panel in the left nav embeds the actual Comfy web UI of the focused endpoint. Useful for:
+One encrypted store (your OS keychain) for every service: **Google Vertex** (service account), **FAL**, **Beeble**, **Topaz**, **BytePlus**, **RunPod Serverless**, **Anthropic (Claude)** and **ShotGrid** (sign in inside the app — works with Autodesk single sign-on — or legacy login / script key).
 
-- Author / edit workflows that become templates.
-- Verify a node graph by hand when a template misbehaves.
-- Drop in custom nodes from the Manager.
+Credentials are grouped by **profile** (e.g. a client name); boards can be locked to a profile. Open from **Settings → Credentials** or any widget that needs a key.
 
-Frames keeps the workflow JSON in sync with your local repo so edits persist across pod restarts. (Edits round-trip through ComfyUI's standard save flow — there's no special "save" button in Frames itself.)
+### Settings
 
-### Files panel
-
-> _Screenshot: Files panel showing the focused pod's /workspace tree._
-
-Browse the focused endpoint's filesystem. Drag files from here onto the canvas (they're downloaded on demand and become media cards). Bookmark folders you visit often; the bookmarks bar pins them to the top.
-
-### Resources panel + dock
-
-> _Screenshot: the Resources dock at the bottom-right showing GPU / VRAM / CPU / RAM / disk._
-
-1Hz live read of the focused endpoint's GPU(s), VRAM, CPU, system RAM, and `/workspace` disk usage. The dock at the bottom-right is the always-on indicator; the full Resources panel adds history charts.
-
-### Actions panel
-
-Common one-shot operations on the focused endpoint:
-
-- **Kill ComfyUI** — terminates the comfy process.
-- **Interrupt** — interrupts the currently running prompt.
-- **Unload Ollama** — frees VRAM held by an idle Ollama model.
-- **Health check** — runs a 4-stage probe (SSH, comfy HTTP, comfy WS, GPU).
-
-### Logs panel
-
-Live tail of `/workspace/comfyui.log`. Auto-reconnects on pod hiccups.
-
-### Terminal panel
-
-Full-featured pseudo-terminal into the focused endpoint, in case you need to hand-run something the UI doesn't expose.
-
-### Settings panel
-
-App-wide preferences:
-
-- Default SSH key path
-- Output / library root location
-- HuggingFace auth (for SAM3 / model downloads)
-- Google APIs (for Gemini Inpaint / Google Gen)
+- **Updates** — version, check now, download progress, release notes, **Restart to update**.
+- **Python runtime** — location, **Move…** to another drive.
+- **Credentials** — opens the credentials manager.
+- **Data folder** — where the library, proxies, thumbnails and boards live (point it at a project drive); restart to apply.
 
 ---
 
-## Keyboard shortcuts
-
-> Inside the Studio canvas, with a placement (media card, sticky, etc.) selected:
+## Keyboard shortcuts (Studio)
 
 | Shortcut | Action |
 |---|---|
-| `Ctrl/⌘ + A` | Select all placements on the active board |
-| `Ctrl/⌘ + C` | Copy selection |
-| `Ctrl/⌘ + X` | Cut selection |
-| `Ctrl/⌘ + V` | Paste at cursor (or cascade if cursor isn't over the canvas) |
-| `Ctrl/⌘ + Z` | Undo (placement move/resize, retime, library item edits) |
-| `Delete` / `Backspace` | Remove selected placements |
-| `Esc` | Cancel an active marquee or close a modal |
-| `←` / `→` | (in a video card) step one frame |
-| `Home` / `End` | (in a video card) jump to first / last frame |
-| `Ctrl/⌘ + Enter` | (in a prompt textarea) submit |
+| Tab | Widget / frame palette |
+| Alt + F / M / C / B / I / T / D / K / G / R | Add Frame / Merge / Color / Blur / Invert / Transform / Despill / Keyer / Regrain / Retime |
+| Ctrl/⌘ + A | Select all |
+| Ctrl/⌘ + C / X / V | Copy / cut / paste (at the cursor) |
+| Ctrl/⌘ + Z / Ctrl/⌘ + Shift + Z | Undo / redo |
+| Delete / Backspace | Remove selection |
+| R / G / B / A | View a single channel on every viewer (Esc clears) |
+| P | Pause / resume board playback |
+
+With a video card selected:
+
+| Shortcut | Action |
+|---|---|
+| Space | Play / pause |
+| ← / → | Step one frame |
+| Home / End | Jump to in / out (or clip start / end) |
+| J / K / L | Reverse / stop / forward (repeat for up to 8×) |
+| I / O | Mark in / out |
+| X (or Shift+I / Shift+O) | Clear in / out |
+
+---
+
+## Running without a pod
+
+- **In-app** (no ComfyUI): all native frames, Rotoscope, 3D Camera, LatLong, Solid, Notes, plus SAM3 / MatAnyone / ViTMatte on your own GPU (after the runtime setup).
+- **Local ComfyUI**: template Frames against ComfyUI on your machine.
+- **Local Generate Media**: Wan 2.1 VACE runs locally; the larger models need a pod.
+- **Cloud**: Generate Media, Inpaint and Prompt Enhancer (Claude / RunPod) need internet and a key, not a pod.
+- **Pod only**: LoRA Trainer and the larger Local Generate Media models.
 
 ---
 
 ## Updates + support
 
-Frames auto-updates on launch from the [`frames-releases`](https://github.com/richservo/frames-releases) repo. You'll see a toast when an update downloads; restart to apply.
+Frames checks for updates at launch and every few hours from [`frames-releases`](https://github.com/richservo/frames-releases), downloads only what changed, and installs on quit — or right away from **Settings → Updates → Restart to update**.
 
-To request support, report a bug, or share feedback: email **gentle.fury@gmail.com**. Include your machine ID (visible in the activation modal's footer) and a recent log snippet from the Logs panel if relevant.
+Support, bugs and feedback: **gentle.fury@gmail.com**. Include your Machine ID (activation screen) and, if relevant, a log snippet or a copied error from the Errors dock.
 
 ---
 
-## What's not in this build
+## Not in this build yet
 
 - macOS installer (Windows only for now).
-- Local-only mode without a connected pod (works for canvas + media organization, but Run requires a connected endpoint).
-- Code-signing on Windows. The installer is unsigned for now — Windows SmartScreen will warn on first run. Click **More info → Run anyway**.
+- Code signing on Windows (SmartScreen will warn on first run).
 
 ---
 
