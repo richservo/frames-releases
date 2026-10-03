@@ -123,7 +123,7 @@ Every native frame previews live and has **Run output** to bake a master (ProRes
 | Widget | What it does |
 |---|---|
 | **Generate Media** | Cloud image/video generation. Google Vertex (Nano Banana Pro / 2, Veo 3 / 3.1, Gemini Omni, Generative Media Pro models), FAL (Seedance, Kling, MiniMax H3, Wan, GPT Image, Seedream, depth, upscale…), Beeble SwitchX, Topaz (upscale / interpolation), BytePlus Seedance. Reference bin, history rail, @mentions. |
-| **Inpaint** | Paint a mask; Nano Banana regenerates just that area as a toggleable layer. Clone stamp, video timeline, layer groups. |
+| **Inpaint** | Paint a mask and regenerate just that area as a toggleable layer, with any image model you have credentials for — Google Vertex (Nano Banana Pro / 2) or FAL (Nano Banana, GPT Image, Seedream…). Clone stamp, video timeline, layer groups. |
 | **Local Generate Media** | Wan VACE video generation, locally or on a pod; pod models include Wan 2.2 VACE, ID-V2V, SCAIL-2 and MiniMax H3 (ref-to-video, masked, ControlNet, first/last frame). |
 | **SAM3 Mask** | Click points to mask a subject; propagates through video. Runs locally. |
 | **MatAnyone** | Mask-guided video alpha matting (feed it a SAM3 mask). |
