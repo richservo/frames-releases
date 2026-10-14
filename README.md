@@ -129,6 +129,7 @@ Every native frame previews live and has **Run output** to bake a master (ProRes
 | **MatAnyone** | Mask-guided video alpha matting (feed it a SAM3 mask). |
 | **ViTMatte** | Turn a rough mask into a clean alpha edge (hair, fur, props). |
 | **Rotoscope** | Animatable bezier shapes with feather; Ctrl+drag snaps points to edges. |
+| **Surface Track** | Tracks every pixel of a plate from a hero frame as a deforming mesh, then sticks an element to the surface or exports an STMap. Holds up on skin, cloth and folding surfaces. Runs locally. |
 | **3D Camera** | Turn a still + depth into a mesh you can move to find a new camera angle. |
 | **Tile Outpaint** | Split a larger canvas into overlapping tiles, generate each, stitch with blending. |
 | **LoRA Trainer** | Train Wan 2.2 character / style / object LoRAs on a connected pod, with live loss and samples. |
@@ -244,9 +245,23 @@ With a video card selected:
 
 ---
 
+#### Surface Track
+
+Sticks an element to a deforming surface, such as a patch on skin that stretches, folds and moves.
+
+1. **Plate:** create the widget with a clip selected, or drop one on the Plate zone in its settings.
+2. **Track:** scrub to the hero frame and Run **Track**. **Draft** tracks at 720 px in seconds, to check the result. **Final** tracks at full plate resolution, in tiles that follow the surface (several minutes). The **Grid** view shows a test grid stuck to the surface; scrub to judge the track.
+3. **Element:** drop an image or clip, lined up with the plate at the hero frame (for example a paint fix). Its linked matte is used as its alpha.
+4. **Masks (optional):** drop roto outputs or any matte. **Contain** trusts the track only inside the matte. **Repel** treats it as an occluder: the track under it is filled in from the surrounding surface.
+5. **Process** (settings), then Run:
+   - **Render element:** the element warped onto the surface, as a 32-bit float EXR with its matte in alpha (premultiplied). It's rendered forward, so a surface that folds over itself stays clean.
+   - **Export STMap:** a 32-bit float EXR, R = U and G = V (bottom-up), for an STMap node. An STMap can't represent a surface folding over itself; use Render element for those shots.
+
+Outputs go into the widget's output rail and to the board's Output folder. **Smooth** removes jagged point-to-point noise. **Set origin** makes any frame the identity without re-tracking.
+
 ## Running without a pod
 
-- **In-app** (no ComfyUI): all native frames, Rotoscope, 3D Camera, LatLong, Solid, Notes, plus SAM3 / MatAnyone / ViTMatte on your own GPU (after the runtime setup).
+- **In-app** (no ComfyUI): all native frames, Rotoscope, 3D Camera, LatLong, Solid, Notes, plus SAM3 / MatAnyone / ViTMatte / Surface Track on your own GPU (after the runtime setup).
 - **Local ComfyUI**: template Frames against ComfyUI on your machine.
 - **Local Generate Media**: Wan 2.1 VACE runs locally; the larger models need a pod.
 - **Cloud**: Generate Media, Inpaint and Prompt Enhancer (Claude / RunPod) need internet and a key, not a pod.
