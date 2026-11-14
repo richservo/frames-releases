@@ -6,7 +6,7 @@
 <p align="center"><strong>Frame-based VFX + AI-gen compositor.</strong></p>
 <p align="center">
   Drop media on a board. Grade, key, matte and comp it in-app, generate with ComfyUI or cloud models,
-  review with your team in ShotGrid — and every output keeps a line back to what made it.
+  review with your team in ShotGrid — or just tell the built-in assistant what you want set up.
 </p>
 
 ---
@@ -15,11 +15,15 @@
 
 Frames is a desktop studio for VFX artists: a board you drop media onto, **frames** that hold a shot's work, and native compositing tools that run in the app — plus ComfyUI templates (local or on a RunPod GPU) and cloud generation models when you need AI.
 
+- **An assistant that operates the app.** Describe a change or a whole workflow in plain words ("make an Inpaint widget for each selected image", "mask the people in the video and run it") and it builds it on the board with the app's own functions, asking before anything that runs or deletes. **Shift+Tab** anywhere — see [The assistant](#the-assistant).
 - **Native frames, no node wiring.** Merge, Color, Blur, Keyer, Despill, Transform, Retime, Regrain and Invert run in-app in float, preview live, and bake masters (ProRes / EXR / HEVC).
 - **ComfyUI templates as forms.** Templates declare their inputs; Frames builds the settings form. Drop media into slots, hit Run.
 - **Cloud generation built in.** Google Vertex (Nano Banana, Veo, Omni), FAL (Seedance, Kling, MiniMax, Wan…), Beeble, Topaz and BytePlus from one widget.
+- **A built-in manual.** **F1** opens the page for whatever you're looking at: the selected widget, the native frame, or the panel you're on.
 - **Lineage by default.** Every output knows which inputs and settings produced it.
+- **RunPod without the website.** Deploy a GPU pod from a wizard (hardware, storage, software, your Hugging Face token — all set for you), see your balance and every pod live, and let pods stop themselves when the GPU sits idle.
 - **Production tie-in.** Track your time, map it to ShotGrid tasks, review versions with frame annotations, and post notes to artists — without leaving the app.
+- **Readable on any screen.** Text size, interface zoom and six colour themes (plus your own) in Settings → Appearance.
 
 ---
 
@@ -79,7 +83,36 @@ The **Machine ID** at the bottom of the screen (with a copy button) is what supp
 4. **Wire it** — drag a media card into the frame's input; tweak it live in the frame's viewer.
 5. **Run output** — bakes a master to the library (and to the board's output folder if set).
 
+Or press **Shift+Tab** and ask the assistant to do any of it. **F1** opens the manual at the page for what you're working on.
+
 To run ComfyUI templates, add a connection first (see [Connection](#connection)) — local ComfyUI or a RunPod pod.
+
+---
+
+## The assistant
+
+Frames has an assistant built in that **operates the app for you**. Press **Shift+Tab** anywhere and type what you want, in plain words — from one change to a whole workflow. It works out the steps and carries them out with the app's own functions, live on your board. Every change can be undone.
+
+**Things you can ask it:**
+
+- "Make an Inpaint widget for each selected image, and lay them out so nothing overlaps."
+- "Make a SAM3 mask from the video with the prompt *people* and run it." — no selection needed; it finds the video.
+- "Use the SAM3 mask as the MatAnyone hint."
+- "Make still frames from the video at 0, 25, 32 and 51."
+- "Save all the Inpaint outputs to the output folder as Paint_Frame<frame number>." — it reads the frame from each source's name.
+- "Resize all of these to 1920 wide."
+- "Make a new board for shot 12 under the KOI project and bring in the plates."
+- "Spin up an RTX 6000 with 300 GB and no Ollama." — if it isn't in stock, it says so and lists comparable cards.
+- "What's my RunPod balance?" · "Stop the training pod."
+- "Why did that run fail?" — it reads the actual errors and logs before answering.
+- "How does the Keyer work?" — it answers from the manual and links the page.
+
+**How it behaves**
+
+- **It can do anything the app can.** Boards and projects, every widget and frame, any setting, connections between widgets, runs, media operations in batches, canvas layout, pods and RunPod, storage, ComfyUI templates, Time and ShotGrid. Anything without a dedicated action it reaches through the interface itself — pressing buttons and setting controls the way you would, including answering Save / Open dialogs.
+- **It asks first** before anything that runs on a pod or spends on a paid service, and before anything that deletes or stops work.
+- **You see it work** — a status line with a clock, the model's thinking, the reply as it streams, and one card per action with **Undo**.
+- **Your own model.** It uses the board's Prompt Enhancer backend (Gemini, Claude, an OpenAI-compatible endpoint, or Ollama locally) and the board's allowed credentials. One conversation per board.
 
 ---
 
@@ -96,7 +129,6 @@ An infinite pan/zoom board (middle-mouse / two-finger drag to pan, wheel to zoom
   - **Allowed credential profiles** — lock a board to a client's accounts; other profiles are hidden and refused at run time.
   - **Output folder** — where **Run output** delivers masters (the library proxy stays in place).
   - **Output frame rate** and **output colorspace** for rendered masters (Auto follows the source).
-  - **GCS bucket** — required for Google's Generative Media Pro models.
   - **ShotGrid time logs** — which ShotGrid task this board's tracked time goes to.
 - **Media cards** — images, video and image sequences with trim (in/out marks), retime, resize, and audio.
 - **Lineage** — outputs keep a dashed line back to their inputs.
@@ -113,30 +145,49 @@ An infinite pan/zoom board (middle-mouse / two-finger drag to pan, wheel to zoom
 | **Despill** | Alt+D | Remove green/blue spill with spill replacement and cast correction. |
 | **Keyer** | Alt+K | Chroma key with screen balance, clip black/white and built-in despill. |
 | **Regrain** | Alt+G | Re-apply the plate's grain to a comp, per-channel. |
-| **Retime** | Alt+R | Keyable speed curve; renders in-betweens with RIFE. |
+| **Retime** | Alt+R | Keyable speed curve; renders in-betweens with RIFE from the master in float. |
 | **Frame** | Alt+F | ComfyUI template container: pick a template, fill its slots, Run. |
 
-Every native frame previews live and has **Run output** to bake a master (ProRes / EXR / HEVC).
+Every native frame previews live and has **Run output** to bake a master in the format you pick under **Master** (ProRes 4444 / HEVC 10-bit / EXR), from the source masters at float precision, in the board's output colorspace.
 
 #### Widgets
 
 | Widget | What it does |
 |---|---|
-| **Generate Media** | Cloud image/video generation. Google Vertex (Nano Banana Pro / 2, Veo 3 / 3.1, Gemini Omni, Generative Media Pro models), FAL (Seedance, Kling, MiniMax H3, Wan, GPT Image, Seedream, depth, upscale…), Beeble SwitchX, Topaz (upscale / interpolation), BytePlus Seedance. Reference bin, history rail, @mentions. |
+| **Generate Media** | Cloud image/video generation. Google Vertex (Nano Banana Pro / 2, Veo 3 / 3.1, Gemini Omni Flash), FAL (Seedance, Kling, MiniMax H3, Wan, GPT Image, Seedream, depth, upscale…), Beeble SwitchX, Topaz (upscale / interpolation), BytePlus Seedance. Reference bin, history rail, @mentions. |
 | **Inpaint** | Paint a mask and regenerate just that area as a toggleable layer, with any image model you have credentials for — Google Vertex (Nano Banana Pro / 2) or FAL (Nano Banana, GPT Image, Seedream…). Clone stamp, video timeline, layer groups. |
-| **Local Generate Media** | Wan VACE video generation, locally or on a pod; pod models include Wan 2.2 VACE, ID-V2V, SCAIL-2 and MiniMax H3 (ref-to-video, masked, ControlNet, first/last frame). |
+| **Local Generate Media** | Video generation locally or on a pod: Wan 2.1 / 2.2 VACE, ID-V2V identity restyle, SCAIL-2 character animate / replace, MiniMax-H3 (reference, masked reference, ControlNet, first/last frame, text, face refine, FAST turbo modes, all with audio), **H3 Video → Video** (Viggle Remake swap / edit, with painted frames, pins and a guided prompt form), and LTX-2.5 (text / image, keyframes, IC-LoRA video-to-video, audio-to-video). Helpers: Canny lines, RollingDepth video depth, whole-body pose. |
 | **SAM3 Mask** | Click points to mask a subject; propagates through video. Runs locally. |
 | **MatAnyone** | Mask-guided video alpha matting (feed it a SAM3 mask). |
-| **ViTMatte** | Turn a rough mask into a clean alpha edge (hair, fur, props). |
+| **ViTMatte** | Turn a rough mask into a clean alpha edge (hair, fur, props), with temporal smoothing for video. |
 | **Rotoscope** | Animatable bezier shapes with feather; Ctrl+drag snaps points to edges. |
-| **Surface Track** | Tracks every pixel of a plate from a hero frame as a deforming mesh, then sticks an element to the surface or exports an STMap. Holds up on skin, cloth and folding surfaces. Runs locally. |
+| **Surface Track** | Tracks every pixel of a plate from a hero frame as a deforming mesh, then sticks an element to the surface, exports an STMap, solves rigid pieces and the camera, and exports geometry. Holds up on skin, cloth and folding surfaces. Runs locally. See [Surface Track](#surface-track) below. |
 | **3D Camera** | Turn a still + depth into a mesh you can move to find a new camera angle. |
 | **Tile Outpaint** | Split a larger canvas into overlapping tiles, generate each, stitch with blending. |
 | **LoRA Trainer** | Train Wan 2.2 character / style / object LoRAs on a connected pod, with live loss and samples. |
-| **Prompt Enhancer** | Rewrite prompts with Ollama, a RunPod serverless endpoint or Claude; positive / negative outputs wire into template slots. |
+| **Prompt Enhancer** | Rewrite prompts with Ollama (local or on the pod), an OpenAI-compatible endpoint (RunPod serverless), Claude or Gemini; positive / negative outputs wire into prompt boxes and template slots. Its backend also powers the assistant. |
 | **LatLong Rotate** | Rotate 360° equirectangular images, with exposure / HDR range. |
 | **Solid** | Solid-color image or video plate. |
 | **Note** | Sticky note. |
+
+#### Surface Track
+
+Sticks an element to a deforming surface, such as a patch on skin that stretches, folds and moves.
+
+1. **Plate:** create the widget with a clip selected, or drop one on the Plate zone in its settings.
+2. **Track:** scrub to the hero frame and Run **Track**. **Draft** tracks at 720 px in seconds, to check the result. **Final** tracks at full plate resolution, in tiles that follow the surface (several minutes). The **Grid** view shows a test grid stuck to the surface; scrub to judge the track.
+3. **Element:** drop an image or clip, lined up with the plate at the hero frame (for example a paint fix). Its linked matte is used as its alpha.
+4. **Masks (optional):** drop roto outputs or any matte. **Contain** trusts the track only inside the matte. **Repel** treats it as an occluder: the track under it is filled in from the surrounding surface.
+5. **Process** (settings), then Run:
+   - **Render element:** the element warped onto the surface, as a 32-bit float EXR with its matte in alpha (premultiplied). It's rendered forward, so a surface that folds over itself stays clean.
+   - **Export STMap:** a 32-bit float EXR, R = U and G = V (bottom-up), for an STMap node. An STMap can't represent a surface folding over itself; use Render element for those shots.
+
+Outputs go into the widget's output rail and to the board's Output folder. **Smooth** removes jagged point-to-point noise. **Set origin** makes any frame the identity without re-tracking.
+
+
+### Manual
+
+**F1** opens the built-in manual (60 pages): getting started, every widget and native frame, every panel, Time, ShotGrid, troubleshooting and the shortcuts. With a widget or native frame selected it opens that page; with nothing selected, the page for the panel you're on. The assistant searches the same manual.
 
 ### Time
 
@@ -183,15 +234,43 @@ Appears in the nav once a ShotGrid site is added in Credentials. A badge shows t
 
 Saved endpoints, stored encrypted:
 
+- **RunPod pods** — deployed from Frames (below); they reconnect on their own, even after a stop/start changes their address.
+- **Existing pods / SSH hosts** — paste an SSH line.
 - **Local ComfyUI** on this machine (install path + port).
-- **Remote** pods — paste an SSH line, or the new-pod wizard for RunPod.
 
 Several can be connected at once; the one you click is *focused* and gets Runs, Files, Resources and the ComfyUI view. Others stay connected so their in-flight runs keep streaming progress.
+
+#### RunPod account
+
+With your RunPod API key (Frames prompts for it, with a link to RunPod's key page), the top of the panel shows:
+
+- **Balance**, what everything running costs per hour, and how long the balance lasts. The same line shows in the Resources dock while a pod runs.
+- **Every pod on the account** — status, GPU, region, uptime, $/hr — with **Start**, **Stop**, **Restart** and **Terminate** (terminate asks first).
+- **Alerts** — a popup wherever you are when the balance drops under $10 or under 3 hours of runway, and if RunPod refuses the saved key.
+- **Network volumes** — list, create, grow, delete.
+
+Adding credit is the one thing still done on RunPod's site (turn on auto-pay there once and it tops itself up).
+
+#### Deploy a pod (no website)
+
+**+ Add pod → Deploy a new RunPod pod**:
+
+1. **Hardware** — live GPU table: VRAM, $/hr, stock per region; secure cloud (default) or community.
+2. **Storage** — the pod's own `/workspace` volume (default 200 GB, survives stop) or a network volume.
+3. **Software** — ComfyUI or a bare pod, node packs, Ollama + models, your saved Hugging Face token, LTX bf16, ComfyUI args, image, Backblaze backup.
+4. **Safety** — GPU idle stop (default 120 min).
+
+**Deploy** creates the pod, waits for it, saves the profile, connects, focuses it and shows the install live. Frames' own SSH key is put on the pod for you. Or ask the assistant: "spin up an RTX 6000 with 300 GB, no Ollama" — it lists what's in stock and comparable cards if yours isn't.
+
+#### GPU idle stop
+
+Each RunPod pod stops itself after its GPU has been idle for the set time (default 2 hours; installs and downloads don't count). It runs on the pod, so it works with Frames closed, and it only **stops** — `/workspace` survives. The pod row shows the countdown; **Change** sets it live; a popup 15 minutes before offers **Keep running**.
 
 ### Run flow
 
 - **Run** submits to the focused ComfyUI. Runs queue per endpoint, one at a time, and survive an app restart (the app rebinds to prompts still running).
-- **Sampling dock** (right rail) streams per-endpoint progress; **Completions** lists recent results — click to find them on the canvas.
+- **Cancel stops the job** — on the pod it was sent to (interrupted if running, removed if waiting), including child frames under a parent. Local jobs (SAM3, mattes, tracking, solves, retime) show in the **Transfers** dock with a working Cancel.
+- **Sampling dock** (right rail) streams per-endpoint progress; **Recent** lists finished results — click to find them on the canvas.
 
 ### Other panels
 
@@ -212,8 +291,10 @@ Credentials are grouped by **profile** (e.g. a client name); boards can be locke
 
 ### Settings
 
+- **Appearance** — **Text size** (80–200%, text only) and **Interface zoom** (80–200%, everything; Ctrl+= / Ctrl+- / Ctrl+0). Themes: **Default**, **High contrast**, **Softer**, **Midnight**, **Graphite**, **Warm**; change any of eight colours to make your own and **Save as theme…**. Live preview, **Reset**.
 - **Updates** — version, check now, download progress, release notes, **Restart to update**.
 - **Python runtime** — location, **Move…** to another drive.
+- **Model library** — folders where models already live (e.g. a ComfyUI models folder); local engines use them before downloading.
 - **Credentials** — opens the credentials manager.
 - **Data folder** — where the library, proxies, thumbnails and boards live (point it at a project drive); restart to apply.
 
@@ -223,11 +304,14 @@ Credentials are grouped by **profile** (e.g. a client name); boards can be locke
 
 | Shortcut | Action |
 |---|---|
+| Shift+Tab | Open / close the assistant (cursor in the message box) |
+| F1 | Manual at the page for the selection or panel |
 | Tab | Widget / frame palette |
 | Alt + F / M / C / B / I / T / D / K / G / R | Add Frame / Merge / Color / Blur / Invert / Transform / Despill / Keyer / Regrain / Retime |
 | Ctrl/⌘ + A | Select all |
 | Ctrl/⌘ + C / X / V | Copy / cut / paste (at the cursor) |
 | Ctrl/⌘ + Z / Ctrl/⌘ + Shift + Z | Undo / redo |
+| Ctrl + = / Ctrl + - / Ctrl + 0 | Interface zoom in / out / reset |
 | Delete / Backspace | Remove selection |
 | R / G / B / A | View a single channel on every viewer (Esc clears) |
 | P | Pause / resume board playback |
@@ -245,26 +329,12 @@ With a video card selected:
 
 ---
 
-#### Surface Track
-
-Sticks an element to a deforming surface, such as a patch on skin that stretches, folds and moves.
-
-1. **Plate:** create the widget with a clip selected, or drop one on the Plate zone in its settings.
-2. **Track:** scrub to the hero frame and Run **Track**. **Draft** tracks at 720 px in seconds, to check the result. **Final** tracks at full plate resolution, in tiles that follow the surface (several minutes). The **Grid** view shows a test grid stuck to the surface; scrub to judge the track.
-3. **Element:** drop an image or clip, lined up with the plate at the hero frame (for example a paint fix). Its linked matte is used as its alpha.
-4. **Masks (optional):** drop roto outputs or any matte. **Contain** trusts the track only inside the matte. **Repel** treats it as an occluder: the track under it is filled in from the surrounding surface.
-5. **Process** (settings), then Run:
-   - **Render element:** the element warped onto the surface, as a 32-bit float EXR with its matte in alpha (premultiplied). It's rendered forward, so a surface that folds over itself stays clean.
-   - **Export STMap:** a 32-bit float EXR, R = U and G = V (bottom-up), for an STMap node. An STMap can't represent a surface folding over itself; use Render element for those shots.
-
-Outputs go into the widget's output rail and to the board's Output folder. **Smooth** removes jagged point-to-point noise. **Set origin** makes any frame the identity without re-tracking.
-
 ## Running without a pod
 
 - **In-app** (no ComfyUI): all native frames, Rotoscope, 3D Camera, LatLong, Solid, Notes, plus SAM3 / MatAnyone / ViTMatte / Surface Track on your own GPU (after the runtime setup).
 - **Local ComfyUI**: template Frames against ComfyUI on your machine.
 - **Local Generate Media**: Wan 2.1 VACE runs locally; the larger models need a pod.
-- **Cloud**: Generate Media, Inpaint and Prompt Enhancer (Claude / RunPod) need internet and a key, not a pod.
+- **Cloud**: Generate Media, Inpaint, Prompt Enhancer and the assistant on a hosted model (Gemini, Claude, RunPod) need internet and a key, not a pod. With Ollama they run locally.
 - **Pod only**: LoRA Trainer and the larger Local Generate Media models.
 
 ---
