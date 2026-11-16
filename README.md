@@ -16,6 +16,8 @@
 Frames is a desktop studio for VFX artists: a board you drop media onto, **frames** that hold a shot's work, and native compositing tools that run in the app — plus ComfyUI templates (local or on a RunPod GPU) and cloud generation models when you need AI.
 
 - **An assistant that operates the app.** Describe a change or a whole workflow in plain words ("make an Inpaint widget for each selected image", "mask the people in the video and run it") and it builds it on the board with the app's own functions, asking before anything that runs or deletes. Use a local model with Ollama and nothing leaves your machine. **Shift+Tab** anywhere — see [The assistant](#the-assistant).
+- **Talk instead of type.** Hold **Alt+Shift** anywhere, say what you want, let go: it is transcribed on your own GPU and sent to the assistant.
+- **Frames on your phone.** Pair a phone by QR code and drive the studio from its browser — nothing to install: the assistant, every widget's settings and Run, board media, live outputs and status. At home on Wi-Fi, or from anywhere with Tailscale. See [Frames on your phone](#frames-on-your-phone).
 - **Native frames, no node wiring.** Merge, Color, Blur, Keyer, Despill, Transform, Retime, Regrain and Invert run in-app in float, preview live, and bake masters (ProRes / EXR / HEVC).
 - **ComfyUI templates as forms.** Templates declare their inputs; Frames builds the settings form. Drop media into slots, hit Run.
 - **Cloud generation built in.** Google Vertex (Nano Banana, Veo, Omni), FAL (Seedance, Kling, MiniMax, Wan…), Beeble, Topaz and BytePlus from one widget.
@@ -47,7 +49,7 @@ After activation, the **Setting up Frames** screen installs the Python runtime o
 2. **Hardware** — **NVIDIA GPU (CUDA)** or **CPU only**. The detected option is marked.
 3. **Install** — progress streams live. Later app updates only download what changed.
 
-Model weights download separately the first time you use each feature. The runtime can be moved later from **Settings → Python runtime**.
+The runtime also installs **ffmpeg** and the **speech-to-text model** (Whisper large-v3-turbo, about 1.6 GB, for push-to-talk); both are checked on every launch and reinstalled if missing. Other model weights download separately the first time you use each feature. The runtime can be moved later from **Settings → Python runtime**.
 
 ### macOS
 
@@ -93,6 +95,8 @@ To run ComfyUI templates, add a connection first (see [Connection](#connection))
 
 Frames has an assistant built in that **operates the app for you**. Press **Shift+Tab** anywhere and type what you want, in plain words — from one change to a whole workflow. It works out the steps and carries them out with the app's own functions, live on your board. Every change can be undone.
 
+**Talk to it.** Hold **Alt+Shift** anywhere in Frames and speak; let go and it is transcribed and sent — the assistant opens if it was closed. Speech is turned into text locally (Whisper, installed with the runtime), so your voice never leaves the computer. Another key while holding cancels it.
+
 **Things you can ask it:**
 
 - "Make an Inpaint widget for each selected image, and lay them out so nothing overlaps."
@@ -114,6 +118,27 @@ Frames has an assistant built in that **operates the app for you**. Press **Shif
 - **You see it work** — a status line with a clock, the model's thinking, the reply as it streams, and one card per action with **Undo**.
 - **Your own model.** It uses the board's Prompt Enhancer backend (Gemini, Claude, an OpenAI-compatible endpoint, or Ollama) and the board's allowed credentials. One conversation per board.
 - **Private if you want it.** Point it at a local model with **Ollama** and the assistant runs entirely on your computer — your prompts, your board and your files never leave your machine. (Ollama on your own pod keeps it on hardware you control.)
+
+---
+
+## Frames on your phone
+
+Use Frames from a phone's browser (Android or iPhone, nothing to install) while the studio runs at home.
+
+**Set up once:** **Settings → Remote → Turn on**, then **Pair a device…** and scan the QR code with the phone's camera. The first time, allow Frames through the Windows firewall on private networks.
+
+- **At home:** the phone on the same Wi-Fi (pick the **Home network** QR).
+- **From anywhere:** install **Tailscale** on the computer and the phone, signed in to the same account, and pick the **Tailscale** QR. Frames is reached only over your home network and Tailscale — it never opens itself to the internet.
+
+**On the phone:**
+
+- **Assistant** — the same conversation as the desktop: send messages (your keyboard's dictation mic works), **Allow / Decline** runs and deletions, **Stop**.
+- **Widgets** — every widget on the board with a thumbnail of what it is controlling, its status, **all of its settings** (the same ones as its desktop panel) and **Run / Stop**. Tap the thumbnail to see every output in its rail.
+- **Media** — every card on the board. **Outputs** — everything Frames generates, live, with a notice when something lands or fails. Step through either full screen with the arrows or a swipe.
+- **Status** — connections (switch which one you work on), GPU / RAM / disks, transfers and errors.
+- **Boards** — tap the board name at the top: the same show / scene tree as the desktop, with search across board names and what is on them.
+
+Each paired phone can be revoked in **Settings → Remote**; a code works once, for one device, for 10 minutes.
 
 ---
 
@@ -246,7 +271,7 @@ Several can be connected at once; the one you click is *focused* and gets Runs, 
 With your RunPod API key (Frames prompts for it, with a link to RunPod's key page), the top of the panel shows:
 
 - **Balance**, what everything running costs per hour, and how long the balance lasts. The same line shows in the Resources dock while a pod runs.
-- **Every pod on the account** — status, GPU, region, uptime, $/hr — with **Start**, **Stop**, **Restart** and **Terminate** (terminate asks first).
+- **Every pod on the account** — status, GPU, region, uptime, $/hr — with **Start**, **Stop**, **Restart** and **Terminate** (terminate asks first). A terminated pod also leaves your Connections list, however it was terminated (here, by idle stop, or on RunPod's site); a stopped pod stays, ready to start again.
 - **Alerts** — a popup wherever you are when the balance drops under $10 or under 3 hours of runway, and if RunPod refuses the saved key.
 - **Network volumes** — list, create, grow, delete.
 
@@ -296,6 +321,7 @@ Credentials are grouped by **profile** (e.g. a client name); boards can be locke
 - **Updates** — version, check now, download progress, release notes, **Restart to update**.
 - **Python runtime** — location, **Move…** to another drive.
 - **Model library** — folders where models already live (e.g. a ComfyUI models folder); local engines use them before downloading.
+- **Remote** — turn phone access on or off, **Pair a device…** (QR code), and the paired devices with **Revoke**. See [Frames on your phone](#frames-on-your-phone).
 - **Credentials** — opens the credentials manager.
 - **Data folder** — where the library, proxies, thumbnails and boards live (point it at a project drive); restart to apply.
 
@@ -306,6 +332,7 @@ Credentials are grouped by **profile** (e.g. a client name); boards can be locke
 | Shortcut | Action |
 |---|---|
 | Shift+Tab | Open / close the assistant (cursor in the message box) |
+| Hold Alt+Shift | Push-to-talk: speak, release to send to the assistant |
 | F1 | Manual at the page for the selection or panel |
 | Tab | Widget / frame palette |
 | Alt + F / M / C / B / I / T / D / K / G / R | Add Frame / Merge / Color / Blur / Invert / Transform / Despill / Keyer / Regrain / Retime |
