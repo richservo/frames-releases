@@ -15,7 +15,7 @@
 
 Frames is a desktop studio for VFX artists: a board you drop media onto, **frames** that hold a shot's work, and native compositing tools that run in the app — plus ComfyUI templates (local or on a RunPod GPU) and cloud generation models when you need AI.
 
-- **An assistant that operates the app.** Describe a change or a whole workflow in plain words ("make an Inpaint widget for each selected image", "mask the people in the video and run it") and it builds it on the board with the app's own functions, asking before anything that runs or deletes. Use a local model with Ollama and nothing leaves your machine. **Shift+Tab** anywhere — see [The assistant](#the-assistant).
+- **An assistant that operates the app.** Describe a change or a whole workflow in plain words ("make an Inpaint widget for each selected image", "mask the people in the video and run it") and it builds it on the board with the app's own functions, asking only before anything that costs money or deletes. Use a local model with Ollama and nothing leaves your machine. **Shift+Tab** anywhere — see [The assistant](#the-assistant).
 - **Talk instead of type.** Hold **Alt+Shift** anywhere, say what you want, let go: it is transcribed on your own GPU and sent to the assistant.
 - **Frames on your phone.** Pair a phone by QR code and drive the studio from its browser — nothing to install: the assistant, every widget's settings and Run, board media, live outputs and status. At home on Wi-Fi, or from anywhere with Tailscale. See [Frames on your phone](#frames-on-your-phone).
 - **Native frames, no node wiring.** Merge, Color, Blur, Keyer, Despill, Transform, Retime, Regrain and Invert run in-app in float, preview live, and bake masters (ProRes / EXR / HEVC).
@@ -106,6 +106,8 @@ Frames has an assistant built in that **operates the app for you**. Press **Shif
 - "Paint the sign bright green and remove it" · "Draw a red circle around the lamp." — it uses Inpaint's Color brush, Square and Circle.
 - "Keep the person in front of layer 2 visible." — it edits an existing layer's mask (cut a subject out, widen, erase, fill).
 - "Mask the cyclist in the Rotoscope." — SAM3 follows the subject through the clip and adds it as a mask layer; "mask out" makes it a subtracting occluder the tracker ignores.
+- "Track the crutches." — it draws editable roto splines (anchors and handles, like the pen) fitted to SAM3's outline of the subject, then runs the track; if SAM3 can't cut it, it traces the shape itself and snaps it to the edges.
+- "Bring in the plate from shot 5840's bin." — it finds the other shot's media, bins or outputs and puts them on your board, without leaving it.
 - "Make still frames from the video at 0, 25, 32 and 51."
 - "Save all the Inpaint outputs to the output folder as Paint_Frame<frame number>." — it reads the frame from each source's name.
 - "Resize all of these to 1920 wide."
@@ -118,10 +120,10 @@ Frames has an assistant built in that **operates the app for you**. Press **Shif
 **How it behaves**
 
 - **It can do anything the app can.** Boards and projects, every widget and frame, any setting, connections between widgets, runs, media operations in batches, canvas layout, pods and RunPod, storage, ComfyUI templates, Time and ShotGrid. Anything without a dedicated action it reaches through the interface itself — pressing buttons and setting controls the way you would, including answering Save / Open dialogs.
-- **It asks first** before anything that runs on a pod or spends on a paid service, and before anything that deletes or stops work.
+- **It asks first** only before something that costs money (a paid-service run, deploying or starting a pod) and before anything that deletes or stops work. Local runs and runs on a pod you already have running just start. **Reckless mode** (the toggle in the assistant's title bar, with a cost warning) lets it spend without asking; the window is outlined in red while it's on, and deleting still always asks.
 - **You see it work** — a status line with a clock, the model's thinking, the reply as it streams, and one card per action with **Undo**.
 - **It learns how you work.** What it had to look up, the way you set things up and your preferences are kept as memory, so a repeat request is one recall, not a lookup. It tidies that memory itself now and then (overlapping entries folded into one); see or edit it in **Settings → Assistant memory**.
-- **Your own model.** It uses the board's Prompt Enhancer backend (Gemini, Claude, an OpenAI-compatible endpoint, or Ollama) and the board's allowed credentials. One conversation per board.
+- **Your own model.** It uses the board's Prompt Enhancer backend (Gemini, Claude, an OpenAI-compatible endpoint, or Ollama) and the board's allowed credentials. One conversation per board, kept with that board even when it opens another.
 - **Private if you want it.** Point it at a local model with **Ollama** and the assistant runs entirely on your computer — your prompts, your board and your files never leave your machine. (Ollama on your own pod keeps it on hardware you control.)
 
 ---
