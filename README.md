@@ -102,6 +102,10 @@ Frames has an assistant built in that **operates the app for you**. Press **Shif
 - "Make an Inpaint widget for each selected image, and lay them out so nothing overlaps."
 - "Make a SAM3 mask from the video with the prompt *people* and run it." — no selection needed; it finds the video.
 - "Use the SAM3 mask as the MatAnyone hint."
+- "Mask the traffic light in the Inpaint and turn it green." — it finds the subject, SAM3 cuts the mask, it writes the prompt, and shows you the mask before running.
+- "Paint the sign bright green and remove it" · "Draw a red circle around the lamp." — it uses Inpaint's Color brush, Square and Circle.
+- "Keep the person in front of layer 2 visible." — it edits an existing layer's mask (cut a subject out, widen, erase, fill).
+- "Mask the cyclist in the Rotoscope." — SAM3 follows the subject through the clip and adds it as a mask layer; "mask out" makes it a subtracting occluder the tracker ignores.
 - "Make still frames from the video at 0, 25, 32 and 51."
 - "Save all the Inpaint outputs to the output folder as Paint_Frame<frame number>." — it reads the frame from each source's name.
 - "Resize all of these to 1920 wide."
@@ -116,6 +120,7 @@ Frames has an assistant built in that **operates the app for you**. Press **Shif
 - **It can do anything the app can.** Boards and projects, every widget and frame, any setting, connections between widgets, runs, media operations in batches, canvas layout, pods and RunPod, storage, ComfyUI templates, Time and ShotGrid. Anything without a dedicated action it reaches through the interface itself — pressing buttons and setting controls the way you would, including answering Save / Open dialogs.
 - **It asks first** before anything that runs on a pod or spends on a paid service, and before anything that deletes or stops work.
 - **You see it work** — a status line with a clock, the model's thinking, the reply as it streams, and one card per action with **Undo**.
+- **It learns how you work.** What it had to look up, the way you set things up and your preferences are kept as memory, so a repeat request is one recall, not a lookup. It tidies that memory itself now and then (overlapping entries folded into one); see or edit it in **Settings → Assistant memory**.
 - **Your own model.** It uses the board's Prompt Enhancer backend (Gemini, Claude, an OpenAI-compatible endpoint, or Ollama) and the board's allowed credentials. One conversation per board.
 - **Private if you want it.** Point it at a local model with **Ollama** and the assistant runs entirely on your computer — your prompts, your board and your files never leave your machine. (Ollama on your own pod keeps it on hardware you control.)
 
@@ -133,7 +138,7 @@ Use Frames from a phone's browser (Android or iPhone, nothing to install) while 
 **On the phone:**
 
 - **Assistant** — the same conversation as the desktop: send messages (your keyboard's dictation mic works), **Allow / Decline** runs and deletions, **Stop**.
-- **Widgets** — every widget on the board with a thumbnail of what it is controlling, its status, **all of its settings** (the same ones as its desktop panel) and **Run / Stop**. Tap the thumbnail to see every output in its rail.
+- **Widgets** — every widget on the board with a thumbnail of what it is controlling, its status, **all of its settings** (the same ones as its desktop panel) and **Run / Stop**. Tap the thumbnail to render its result and step through every output in its rail. **Layers** on an Inpaint card controls its layer rail from the phone — show / hide, opacity, feather, variations, new variation, delete — live on the computer, so the phone works as a second-screen controller.
 - **Media** — every card on the board. **Outputs** — everything Frames generates, live, with a notice when something lands or fails. Step through either full screen with the arrows or a swipe.
 - **Status** — connections (switch which one you work on), GPU / RAM / disks, transfers and errors.
 - **Boards** — tap the board name at the top: the same show / scene tree as the desktop, with search across board names and what is on them.
@@ -182,7 +187,7 @@ Every native frame previews live and has **Run output** to bake a master in the 
 |---|---|
 | **Generate Media** | Cloud image/video generation. Google Vertex (Nano Banana Pro / 2, Veo 3 / 3.1, Gemini Omni Flash), FAL (Seedance, Kling, MiniMax H3, Wan, GPT Image, Seedream, depth, upscale…), Beeble SwitchX, Topaz (upscale / interpolation), BytePlus Seedance. Reference bin, history rail, @mentions. |
 | **Inpaint** | Paint a mask and regenerate just that area as a toggleable layer, with any image model you have credentials for — Google Vertex (Nano Banana Pro / 2) or FAL (Nano Banana, GPT Image, Seedream…). Clone stamp, video timeline, layer groups. |
-| **Local Generate Media** | Video generation locally or on a pod: Wan 2.1 / 2.2 VACE, ID-V2V identity restyle, SCAIL-2 character animate / replace, MiniMax-H3 (reference, masked reference, ControlNet, first/last frame, text, face refine, FAST turbo modes, all with audio), **H3 Video → Video** (Viggle Remake swap / edit, with painted frames, pins and a guided prompt form), and LTX-2.5 (text / image, keyframes, IC-LoRA video-to-video, audio-to-video). Helpers: Canny lines, RollingDepth video depth, whole-body pose. |
+| **Local Generate Media** | Video generation locally or on a pod: Wan 2.1 / 2.2 VACE, ID-V2V identity restyle, SCAIL-2 character animate / replace, MiniMax-H3 (reference, masked reference, ControlNet, first/last frame, text, face refine, FAST turbo modes, all with audio), **H3 Video → Video** (Viggle Remake swap / edit, with painted frames, pins and a guided prompt form), and LTX-2.5 (text / image, keyframes, IC-LoRA video-to-video incl. community adapters such as Obscura Remova for occlusion removal, audio-to-video). Helpers: Canny lines, RollingDepth video depth, whole-body pose. |
 | **SAM3 Mask** | Click points to mask a subject; propagates through video. Runs locally. |
 | **MatAnyone** | Mask-guided video alpha matting (feed it a SAM3 mask). |
 | **ViTMatte** | Turn a rough mask into a clean alpha edge (hair, fur, props), with temporal smoothing for video. |
