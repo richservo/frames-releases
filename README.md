@@ -213,7 +213,7 @@ Outputs go into the widget's output rail and to the board's Output folder. **Smo
 
 ### Manual
 
-**F1** opens the built-in manual (60 pages): getting started, every widget and native frame, every panel, Time, ShotGrid, troubleshooting and the shortcuts. With a widget or native frame selected it opens that page; with nothing selected, the page for the panel you're on. The assistant searches the same manual.
+**F1** opens the built-in manual (61 pages): getting started, every widget and native frame, every panel, Time, ShotGrid, troubleshooting and the shortcuts. With a widget or native frame selected it opens that page; with nothing selected, the page for the panel you're on. The assistant searches the same manual.
 
 ### Time
 
