@@ -131,6 +131,7 @@ Frames has an assistant built in that **operates the app for you**. Press **Shif
 - **You see it work** — a status line with a clock, the model's thinking, the reply as it streams, and one card per action with **Undo**.
 - **It learns how you work.** What it had to look up, the way you set things up and your preferences are kept as memory, so a repeat request is one recall, not a lookup. It tidies that memory itself now and then (overlapping entries folded into one); see or edit it in **Settings → Assistant memory**.
 - **Your own model.** It uses the board's Prompt Enhancer backend (Gemini, Claude, an OpenAI-compatible endpoint, or Ollama) and the board's allowed credentials. One conversation per board, kept with that board even when it opens another.
+- **Tested model: Gemini 3.8 Flash.** The assistant is tested and approved with **Gemini 3.8 Flash**. It also runs on other models (Claude, OpenAI-compatible endpoints, Ollama), but those are untested, so the quality of their results can't be verified.
 - **Private if you want it.** Point it at a local model with **Ollama** and the assistant runs entirely on your computer — your prompts, your board and your files never leave your machine. (Ollama on your own pod keeps it on hardware you control.)
 
 ---
