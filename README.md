@@ -16,7 +16,7 @@
 Frames is a desktop studio for VFX artists: a board you drop media onto, **frames** that hold a shot's work, and native compositing tools that run in the app — plus ComfyUI templates (local or on a RunPod GPU) and cloud generation models when you need AI.
 
 - **An assistant that operates the app.** Describe a change or a whole workflow in plain words ("make an Inpaint widget for each selected image", "mask the people in the video and run it") and it builds it on the board with the app's own functions, asking only before anything that costs money or deletes. Use a local model with Ollama and nothing leaves your machine. **Shift+Tab** anywhere — see [The assistant](#the-assistant).
-- **Talk instead of type.** Hold **Alt+Shift** anywhere, say what you want, let go: it is transcribed on your own GPU and sent to the assistant.
+- **Talk instead of type.** Hold **Alt+Shift** anywhere, say what you want, let go: it is transcribed on your own machine (your GPU on Windows, Apple's on-device speech on a Mac) and sent to the assistant.
 - **Frames on your phone.** Pair a phone by QR code and drive the studio from its browser — nothing to install: the assistant, every widget's settings and Run, board media, live outputs and status. At home on Wi-Fi, or from anywhere with Tailscale. See [Frames on your phone](#frames-on-your-phone).
 - **Native frames, no node wiring.** Merge, Color, Blur, Keyer, Despill, Transform, Retime, Regrain and Invert run in-app in float, preview live, and bake masters (ProRes / EXR / HEVC).
 - **ComfyUI templates as forms.** Templates declare their inputs; Frames builds the settings form. Drop media into slots, hit Run.
@@ -46,14 +46,21 @@ Download the latest `Frames-Setup-X.Y.Z.exe` from the [Releases page](https://gi
 After activation, the **Setting up Frames** screen installs the Python runtime once (several GB):
 
 1. **Location** — default `%LOCALAPPDATA%\Frames\runtime`, or pick another drive with **Change…** (handy to keep large files off C:).
-2. **Hardware** — **NVIDIA GPU (CUDA)** or **CPU only**. The detected option is marked.
+2. **Hardware** (Windows) — **NVIDIA GPU (CUDA)** or **CPU only**. The detected option is marked.
 3. **Install** — progress streams live. Later app updates only download what changed.
 
-The runtime also installs **ffmpeg** and the **speech-to-text model** (Whisper large-v3-turbo, about 1.6 GB, for push-to-talk); both are checked on every launch and reinstalled if missing. Other model weights download separately the first time you use each feature. The runtime can be moved later from **Settings → Python runtime**.
+The runtime also installs **ffmpeg** and, on Windows, the **speech-to-text model** (Whisper large-v3-turbo, about 1.6 GB, for push-to-talk); both are checked on every launch and reinstalled if missing. Other model weights download separately the first time you use each feature. The runtime can be moved later from **Settings → Python runtime**.
 
-### macOS
+### macOS (Apple Silicon)
 
-Coming soon.
+Download the latest `Frames-X.Y.Z-arm64.dmg` from the [Releases page](https://github.com/richservo/frames-releases/releases/latest), open it and drag **Frames** to **Applications**.
+
+- Needs an **Apple Silicon Mac** (M1 or later) on **macOS 26 or later**.
+- Signed with a Developer ID and notarized by Apple, so it opens normally - no security warnings.
+- The first launch sets up a smaller runtime than on Windows (about 660 MB: ffmpeg and the Python tools that run on the CPU).
+- **Push-to-talk** uses Apple's on-device speech recognition; macOS asks for microphone and speech access the first time.
+
+**The AI tools run on a RunPod pod.** A Mac has no NVIDIA GPU, so every tool that needs one runs on your focused pod instead: SAM3, MatAnyone, ViTMatte, the Rotoscope and Surface trackers, the 3D Camera solve, motion flow and retime, and Local Generate Media. Connect a pod in the **Connection** panel and they work as usual - your clips upload once and results come back into your library. The first run on a pod installs the tools there (a few minutes, shown in **Transfers**); deploy with a **network volume** so it stays installed for your next pods. RollingDepth and Pose have no pod version yet, so they are not available on a Mac. Everything else - the board, native frames (Merge, Color, Blur, Keyer...), the viewers, exports, cloud models and the assistant - runs on the Mac itself. The same applies to a Windows PC without an NVIDIA GPU.
 
 ---
 
@@ -95,7 +102,7 @@ To run ComfyUI templates, add a connection first (see [Connection](#connection))
 
 Frames has an assistant built in that **operates the app for you**. Press **Shift+Tab** anywhere and type what you want, in plain words — from one change to a whole workflow. It works out the steps and carries them out with the app's own functions, live on your board. Every change can be undone.
 
-**Talk to it.** Hold **Alt+Shift** anywhere in Frames and speak; let go and it is transcribed and sent — the assistant opens if it was closed. Speech is turned into text locally (Whisper, installed with the runtime), so your voice never leaves the computer. Another key while holding cancels it.
+**Talk to it.** Hold **Alt+Shift** anywhere in Frames and speak; let go and it is transcribed and sent — the assistant opens if it was closed. Speech is turned into text locally (Whisper on Windows, installed with the runtime; Apple's on-device speech on a Mac), so your voice never leaves the computer. Another key while holding cancels it.
 
 **Things you can ask it:**
 
@@ -190,7 +197,7 @@ Every native frame previews live and has **Run output** to bake a master in the 
 | **Generate Media** | Cloud image/video generation. Google Vertex (Nano Banana Pro / 2, Veo 3 / 3.1, Gemini Omni Flash), FAL (Seedance, Kling, MiniMax H3, Wan, GPT Image, Seedream, depth, upscale…), Beeble SwitchX, Topaz (upscale / interpolation), BytePlus Seedance. Reference bin, history rail, @mentions. |
 | **Inpaint** | Paint a mask and regenerate just that area as a toggleable layer, with any image model you have credentials for — Google Vertex (Nano Banana Pro / 2) or FAL (Nano Banana, GPT Image, Seedream…). Clone stamp, video timeline, layer groups. |
 | **Local Generate Media** | Video generation locally or on a pod: Wan 2.1 / 2.2 VACE, ID-V2V identity restyle, SCAIL-2 character animate / replace, MiniMax-H3 (reference, masked reference, ControlNet, first/last frame, text, face refine, FAST turbo modes, all with audio), **H3 Video → Video** (Viggle Remake swap / edit, with painted frames, pins and a guided prompt form), and LTX-2.5 (text / image, keyframes, IC-LoRA video-to-video incl. community adapters such as Obscura Remova for occlusion removal, audio-to-video). Helpers: Canny lines, RollingDepth video depth, whole-body pose. |
-| **SAM3 Mask** | Click points to mask a subject; propagates through video. Runs locally. |
+| **SAM3 Mask** | Click points to mask a subject; propagates through video. Runs on your NVIDIA GPU, or on your pod (Mac, or no NVIDIA GPU). |
 | **MatAnyone** | Mask-guided video alpha matting (feed it a SAM3 mask). |
 | **ViTMatte** | Turn a rough mask into a clean alpha edge (hair, fur, props), with temporal smoothing for video. |
 | **Rotoscope** | Animatable bezier shapes with feather; Ctrl+drag snaps points to edges. |
@@ -327,6 +334,7 @@ Credentials are grouped by **profile** (e.g. a client name); boards can be locke
 - **Appearance** — **Text size** (80–200%, text only) and **Interface zoom** (80–200%, everything; Ctrl+= / Ctrl+- / Ctrl+0). Themes: **Default**, **High contrast**, **Softer**, **Midnight**, **Graphite**, **Warm**; change any of eight colours to make your own and **Save as theme…**. Live preview, **Reset**.
 - **Updates** — version, check now, download progress, release notes, **Restart to update**.
 - **Python runtime** — location, **Move…** to another drive.
+- **Where ML tools run** — **Auto** (your NVIDIA GPU if you have one, otherwise your focused pod), **This computer**, or **Pod** (for example when the local card is too small for a long shot).
 - **Model library** — folders where models already live (e.g. a ComfyUI models folder); local engines use them before downloading.
 - **Remote** — turn phone access on or off, **Pair a device…** (QR code), and the paired devices with **Revoke**. See [Frames on your phone](#frames-on-your-phone).
 - **Credentials** — opens the credentials manager.
@@ -366,7 +374,7 @@ With a video card selected:
 
 ## Running without a pod
 
-- **In-app** (no ComfyUI): all native frames, Rotoscope, 3D Camera, LatLong, Solid, Notes, plus SAM3 / MatAnyone / ViTMatte / Surface Track on your own GPU (after the runtime setup).
+- **In-app** (no ComfyUI): all native frames, Rotoscope, 3D Camera, LatLong, Solid, Notes, plus SAM3 / MatAnyone / ViTMatte / Surface Track on your own NVIDIA GPU (after the runtime setup). On a Mac, or a PC without an NVIDIA GPU, those AI tools need a pod.
 - **Local ComfyUI**: template Frames against ComfyUI on your machine.
 - **Local Generate Media**: Wan 2.1 VACE runs locally; the larger models need a pod.
 - **Cloud**: Generate Media, Inpaint, Prompt Enhancer and the assistant on a hosted model (Gemini, Claude, RunPod) need internet and a key, not a pod. With Ollama they run locally.
@@ -384,8 +392,8 @@ Support, bugs and feedback: **gentle.fury@gmail.com**. Include your Machine ID (
 
 ## Not in this build yet
 
-- macOS installer (Windows only for now).
 - Code signing on Windows (SmartScreen will warn on first run).
+- Running the AI tools on the Mac's own GPU (Apple Silicon); for now they run on a pod.
 
 ---
 
